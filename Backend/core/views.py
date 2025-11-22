@@ -35,3 +35,21 @@ class RegisterView(generics.CreateAPIView):
 @permission_classes([IsAuthenticated])
 def protected_view(request):
     return Response({"ok": True, "user": request.user.username})
+
+# -------------------------
+# Endpoint para /api/auth/me/
+# -------------------------
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from .serializers import UserSerializer
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def me_view(request):
+    """
+    Devuelve los datos del usuario autenticado.
+    GET /api/auth/me/
+    """
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)

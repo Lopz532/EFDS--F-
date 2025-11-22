@@ -13,4 +13,5 @@ urlpatterns = [
 from .auth_views import LogoutView
 urlpatterns += [
     path('auth/logout/', LogoutView.as_view(), name='auth-logout'),
+    path('auth/me/', views.me_view, name='auth-me'),
 ]
