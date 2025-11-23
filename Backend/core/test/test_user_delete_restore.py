@@ -6,6 +6,7 @@ from core.models import DeletionLog
 
 User = get_user_model()
 
+
 class UserDeleteRestoreAPITest(TestCase):
     def setUp(self):
         # usuarios
@@ -14,8 +15,12 @@ class UserDeleteRestoreAPITest(TestCase):
         self.admin.is_superuser = True
         self.admin.save()
 
-        self.teacher = User.objects.create_user(username="teacher_ci", password="teacherpass")
-        self.student = User.objects.create_user(username="student_ci", password="studentpass")
+        self.teacher = User.objects.create_user(
+            username="teacher_ci", password="teacherpass"
+        )
+        self.student = User.objects.create_user(
+            username="student_ci", password="studentpass"
+        )
 
         # cliente API
         self.client = APIClient()
@@ -28,11 +33,17 @@ class UserDeleteRestoreAPITest(TestCase):
         url_delete = f"/api/users/{self.student.pk}/"
         resp = self.client.delete(url_delete)
         # Según tu implementación devolvía 204, aceptamos 200/204
-        self.assertIn(resp.status_code, (200, 204), msg=f"delete status {resp.status_code} / {resp.content!r}")
+        self.assertIn(
+            resp.status_code,
+            (200, 204),
+            msg=f"delete status {resp.status_code} / {resp.content!r}",
+        )
 
         # el usuario debe quedar inactivo
         student = User.objects.get(pk=self.student.pk)
-        self.assertFalse(student.is_active, "student should be deactivated after delete")
+        self.assertFalse(
+            student.is_active, "student should be deactivated after delete"
+        )
 
         # Debe existir un DeletionLog apuntando al usuario
         logs = DeletionLog.objects.filter(deleted_user=self.student.pk)
@@ -41,7 +52,11 @@ class UserDeleteRestoreAPITest(TestCase):
         # Restore via endpoint
         url_restore = f"/api/users/{self.student.pk}/restore/"
         resp_restore = self.client.post(url_restore)
-        self.assertEqual(resp_restore.status_code, 200, msg=f"restore status {resp_restore.status_code} / {resp_restore.content!r}")
+        self.assertEqual(
+            resp_restore.status_code,
+            200,
+            msg=f"restore status {resp_restore.status_code} / {resp_restore.content!r}",
+        )
 
         # usuario activo otra vez
         student.refresh_from_db()
@@ -55,4 +70,6 @@ class UserDeleteRestoreAPITest(TestCase):
         # ahora autenticar como teacher (no admin) y tratar de restaurar
         self.client.force_authenticate(user=self.teacher)
         resp = self.client.post(f"/api/users/{self.student.pk}/restore/")
-        self.assertIn(resp.status_code, (401, 403), msg="non-admin should not be able to restore")
+        self.assertIn(
+            resp.status_code, (401, 403), msg="non-admin should not be able to restore"
+        )

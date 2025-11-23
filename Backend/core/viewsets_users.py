@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAdminUser
 
 User = get_user_model()
 
+
 class UserViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -24,18 +25,23 @@ class UserViewSet(viewsets.GenericViewSet):
         self.check_object_permissions(request, user)
 
         if user == request.user and not request.user.is_superuser:
-            return Response({"detail": "No puedes eliminarte a ti mismo."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "No puedes eliminarte a ti mismo."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         user.is_active = False
         user.save()
 
-        reason = request.data.get('reason', '')
-        DeletionLog.objects.create(deleted_user=user, deleted_by=request.user, reason=reason)
+        reason = request.data.get("reason", "")
+        DeletionLog.objects.create(
+            deleted_user=user, deleted_by=request.user, reason=reason
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # 🔥🔥🔥 AGREGA ESTO AL FINAL DE LA CLASE
-    @action(detail=True, methods=['post'], permission_classes=[IsAdminUser])
+    @action(detail=True, methods=["post"], permission_classes=[IsAdminUser])
     def restore(self, request, pk=None):
         """
         Admin-only: restaura un usuario marcado con is_active=False.
@@ -47,7 +53,10 @@ class UserViewSet(viewsets.GenericViewSet):
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
         if user.is_active:
-            return Response({"detail": "User is already active."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "User is already active."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         user.is_active = True
         user.save()

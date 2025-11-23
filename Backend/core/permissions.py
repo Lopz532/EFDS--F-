@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+
 def _get_salon_from_user(u):
     """
     Intenta sacar el 'salon' de un user.
@@ -13,23 +14,25 @@ def _get_salon_from_user(u):
     if u is None:
         return None
     # directo
-    for attr in ('salon','classroom','group','room'):
+    for attr in ("salon", "classroom", "group", "room"):
         v = getattr(u, attr, None)
         if v is not None:
             return v
     # perfil relacionado
-    profile = getattr(u, 'profile', None)
+    profile = getattr(u, "profile", None)
     if profile is not None:
-        for attr in ('salon','classroom','group','room'):
+        for attr in ("salon", "classroom", "group", "room"):
             v = getattr(profile, attr, None)
             if v is not None:
                 return v
     return None
 
+
 class IsTeacherOrReadOnly(BasePermission):
     """
     Permite solo métodos de lectura a cualquiera; métodos no seguros sólo a teachers (o staff).
     """
+
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
@@ -37,9 +40,10 @@ class IsTeacherOrReadOnly(BasePermission):
         if not user or not user.is_authenticated:
             return False
         # preferir campo 'role' si existe
-        if hasattr(user, 'role'):
-            return getattr(user, 'role') == 'teacher'
+        if hasattr(user, "role"):
+            return getattr(user, "role") == "teacher"
         return user.is_staff
+
 
 class CanDeleteUser(BasePermission):
     """
@@ -54,9 +58,10 @@ class CanDeleteUser(BasePermission):
     - Cualquier otro usuario -> no puede eliminar.
     - Si no se puede determinar el 'salon' del profesor o del objetivo -> denegar por seguridad.
     """
+
     def has_permission(self, request, view):
         # No interferimos en otros métodos: solo aplicamos para DELETE
-        if request.method != 'DELETE':
+        if request.method != "DELETE":
             return True
         return bool(request.user and request.user.is_authenticated)
 
@@ -72,14 +77,18 @@ class CanDeleteUser(BasePermission):
             return True
 
         # Profesor?
-        role = getattr(user, 'role', None)
-        is_teacher = (role == 'teacher') or user.is_staff is True  # si no hay role, is_staff puede indicar permiso
+        role = getattr(user, "role", None)
+        is_teacher = (
+            role == "teacher"
+        ) or user.is_staff is True  # si no hay role, is_staff puede indicar permiso
         if not is_teacher:
             return False
 
         # No permitir a profesor eliminar a otros profesores/admins
-        target_role = getattr(obj, 'role', None)
-        target_is_teacher_or_staff = (target_role == 'teacher') or getattr(obj, 'is_staff', False)
+        target_role = getattr(obj, "role", None)
+        target_is_teacher_or_staff = (target_role == "teacher") or getattr(
+            obj, "is_staff", False
+        )
         if target_is_teacher_or_staff:
             return False
 

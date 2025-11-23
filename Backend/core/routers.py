@@ -10,9 +10,9 @@ from .viewsets_users import UserViewSet
 from .viewsets_audit import DeletionLogViewSet
 
 router = DefaultRouter()
-router.register(r'materias', MateriaViewSet, basename='materia')
-router.register(r'tareas', TareaViewSet, basename='tarea')
+router.register(r"materias", MateriaViewSet, basename="materia")
+router.register(r"tareas", TareaViewSet, basename="tarea")
 
 # Registrar users y logs de auditoría
-router.register(r'users', UserViewSet, basename='user')
-router.register(r'deletion-logs', DeletionLogViewSet, basename='deletionlog')
+router.register(r"users", UserViewSet, basename="user")
+router.register(r"deletion-logs", DeletionLogViewSet, basename="deletionlog")
