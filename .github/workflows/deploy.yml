@@ -44,4 +44,5 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: backend_project.settings
         run: |
+          cd Backend
           python manage.py test -v 2
