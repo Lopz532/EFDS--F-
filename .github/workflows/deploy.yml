@@ -65,7 +65,9 @@ jobs:
 
       # 7️⃣ Publicar resultados (opcional)
       - name: Upload coverage to Codecov
+        if: secrets.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@v4
         with:
-          files: ./Backend/coverage.xml
-          fail_ci_if_error: true
+         files: ./Backend/coverage.xml
+         token: ${{ secrets.CODECOV_TOKEN }}
+         fail_ci_if_error: false
