@@ -12,27 +12,35 @@ jobs:
         python-version: [3.11]   # ajusta si usas otra versión
 
     steps:
+      # 1️⃣ Checkout del repo
       - uses: actions/checkout@v4
 
+      # 2️⃣ Configurar Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
+      # 3️⃣ Instalar dependencias
       - name: Install dependencies
+        working-directory: ./Backend
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          # ensure test dependencies
+          # dependencias esenciales para tests
           pip install django djangorestframework drf-spectacular djangorestframework-simplejwt
 
+      # 4️⃣ Ejecutar migraciones
       - name: Run migrations
+        working-directory: ./Backend
         env:
           DJANGO_SETTINGS_MODULE: backend_project.settings
         run: |
           python manage.py migrate --noinput
 
+      # 5️⃣ Ejecutar tests
       - name: Run tests
+        working-directory: ./Backend
         env:
           DJANGO_SETTINGS_MODULE: backend_project.settings
         run: |
