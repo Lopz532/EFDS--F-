@@ -2,6 +2,9 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
+import Materias from "../pages/Materias";
+import Tareas from "../pages/Tareas";
+import Usuarios from "../pages/Usuarios";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 export default function AppRouter() {
@@ -10,12 +13,33 @@ export default function AppRouter() {
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<Login />} />
+
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
         } />
-        {/* agrega más rutas */}
+
+        <Route path="/materias" element={
+          <ProtectedRoute>
+            <Materias />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/tareas" element={
+          <ProtectedRoute>
+            <Tareas />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/usuarios" element={
+          <ProtectedRoute>
+            <Usuarios />
+          </ProtectedRoute>
+        } />
+
+        {/* Ruta 404 */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   );
