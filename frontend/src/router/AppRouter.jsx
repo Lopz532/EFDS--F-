@@ -11,32 +11,56 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Redirección inicial */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<Login />} />
 
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } />
+        {/* Rutas protegidas */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/materias" element={
-          <ProtectedRoute>
-            <Materias />
-          </ProtectedRoute>
-        } />
+        <Route
+          path="/materias"
+          element={
+            <ProtectedRoute>
+              <Materias />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/tareas" element={
-          <ProtectedRoute>
-            <Tareas />
-          </ProtectedRoute>
-        } />
+        {/* Rutas dinámicas de materias y tareas */}
+        <Route
+          path="/materias/:materiaId"
+          element={
+            <ProtectedRoute>
+              <Tareas />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/usuarios" element={
-          <ProtectedRoute>
-            <Usuarios />
-          </ProtectedRoute>
-        } />
+        <Route
+          path="/tareas"
+          element={
+            <ProtectedRoute>
+              <Tareas />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/usuarios"
+          element={
+            <ProtectedRoute>
+              <Usuarios />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Ruta 404 */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

@@ -13,12 +13,10 @@ def _get_salon_from_user(u):
     """
     if u is None:
         return None
-    # directo
     for attr in ("salon", "classroom", "group", "room"):
         v = getattr(u, attr, None)
         if v is not None:
             return v
-    # perfil relacionado
     profile = getattr(u, "profile", None)
     if profile is not None:
         for attr in ("salon", "classroom", "group", "room"):
@@ -30,7 +28,8 @@ def _get_salon_from_user(u):
 
 class IsTeacherOrReadOnly(BasePermission):
     """
-    Permite solo métodos de lectura a cualquiera; métodos no seguros sólo a teachers (o staff).
+    Permite solo métodos de lectura a cualquiera;
+    métodos no seguros sólo a teachers (o staff).
     """
 
     def has_permission(self, request, view):
@@ -39,7 +38,6 @@ class IsTeacherOrReadOnly(BasePermission):
         user = request.user
         if not user or not user.is_authenticated:
             return False
-        # preferir campo 'role' si existe
         if hasattr(user, "role"):
             return getattr(user, "role") == "teacher"
         return user.is_staff
@@ -47,62 +45,67 @@ class IsTeacherOrReadOnly(BasePermission):
 
 class CanDeleteUser(BasePermission):
     """
-    Permiso para DELETE sobre usuarios.
-
-    Reglas:
-    - ADMIN (is_staff o is_superuser) -> puede eliminar cualquier usuario.
-    - PROFESOR (role == 'teacher' o is_staff fallback) -> solo puede eliminar usuarios que:
-        * sean alumnos (no otros teachers/admins), Y
-        * pertenezcan AL MISMO salon que el profesor.
-      Esto evita que un profesor borre alumnos de otros salones.
-    - Cualquier otro usuario -> no puede eliminar.
-    - Si no se puede determinar el 'salon' del profesor o del objetivo -> denegar por seguridad.
+    Solo permite eliminar usuarios bajo ciertas condiciones:
+    - Admin siempre puede
+    - Profesor puede eliminar alumnos de su salón
     """
 
     def has_permission(self, request, view):
-        # No interferimos en otros métodos: solo aplicamos para DELETE
         if request.method != "DELETE":
             return True
         return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        """
-        obj: instancia de User objetivo
-        request.user: quien hace la petición
-        """
         user = request.user
 
-        # Admin siempre puede (staff o superuser)
+        # Admin siempre puede
         if user.is_staff or user.is_superuser:
             return True
 
-        # Profesor?
         role = getattr(user, "role", None)
-        is_teacher = (
-            role == "teacher"
-        ) or user.is_staff is True  # si no hay role, is_staff puede indicar permiso
+        is_teacher = (role == "teacher") or getattr(user, "is_staff", False)
         if not is_teacher:
             return False
 
-        # No permitir a profesor eliminar a otros profesores/admins
         target_role = getattr(obj, "role", None)
-        target_is_teacher_or_staff = (target_role == "teacher") or getattr(
-            obj, "is_staff", False
-        )
+        target_is_teacher_or_staff = (target_role == "teacher") or getattr(obj, "is_staff", False)
         if target_is_teacher_or_staff:
             return False
 
-        # Evitar que se borre a sí mismo
+        # Evitar borrarse a sí mismo
         if obj.pk == user.pk:
             return False
 
-        # Comparar salones: profesor debe poder borrar SOLO alumnos de SU salón
         prof_salon = _get_salon_from_user(user)
         target_salon = _get_salon_from_user(obj)
 
         if prof_salon is None or target_salon is None:
-            # si no hay info suficiente, denegar (seguridad primero)
             return False
 
-        # Permitir sólo si son el mismo salón
         return str(prof_salon) == str(target_salon)
+
+
+class IsOwnerOrTeacher(BasePermission):
+    """
+    Para Materias y Tareas:
+    - Lectura: alumnos solo ven si la materia es de su salón
+    - Escritura: solo profesores o admins
+    """
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+
+        if request.method in SAFE_METHODS:
+            if getattr(user, "role", None) == "student":
+                # Alumno ve solo si pertenece al salón de la materia
+                target_salon = getattr(obj.materia, "salones", None)
+                user_salon = _get_salon_from_user(user)
+                if target_salon is None or user_salon is None:
+                    return False
+                return user_salon in target_salon.all()
+            return True
+
+        # Escritura solo profesores
+        if getattr(user, "role", None) == "teacher" or user.is_staff:
+            return True
+        return False

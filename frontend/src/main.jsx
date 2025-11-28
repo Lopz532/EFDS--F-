@@ -11,3 +11,9 @@ createRoot(document.getElementById("root")).render(
     </AuthProvider>
   </React.StrictMode>
 );
+
+function App() {
+  return <AppRouter />;
+}
+
+export default App;

@@ -1,1 +1,5 @@
-// Archivo vacío - Implementa tu propio componente Spinner
+const Spinner = () => {
+    return <div>Cargando...</div>;
+};
+
+export default Spinner;

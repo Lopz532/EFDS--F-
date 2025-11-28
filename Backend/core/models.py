@@ -1,4 +1,3 @@
-# core/models.py
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -57,9 +56,6 @@ from django.utils import timezone
 
 
 class Classroom(models.Model):
-    """
-    Representa un salon / grupo / clase.
-    """
 
     nombre = models.CharField(max_length=120, unique=True)
     descripcion = models.TextField(blank=True)
@@ -70,10 +66,7 @@ class Classroom(models.Model):
 
 
 class StudentProfile(models.Model):
-    """
-    Perfil opcional para usuarios que son alumnos. Relacionado OneToOne con User.
-    Contiene referencia a Classroom (salon).
-    """
+
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
@@ -93,9 +86,7 @@ class StudentProfile(models.Model):
 
 
 class DeletionLog(models.Model):
-    """
-    Registro de auditoría cuando se realiza un 'soft delete' sobre un usuario.
-    """
+
 
     deleted_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -122,10 +113,7 @@ from django.conf import settings
 from django.utils import timezone
 
 
-class Classroom(models.Model):
-    """
-    Representa un salon / grupo / clase.
-    """
+class Classroom(models.Model):    
 
     nombre = models.CharField(max_length=120, unique=True)
     descripcion = models.TextField(blank=True)
@@ -136,10 +124,6 @@ class Classroom(models.Model):
 
 
 class StudentProfile(models.Model):
-    """
-    Perfil opcional para usuarios que son alumnos. Relacionado OneToOne con User.
-    Contiene referencia a Classroom (salon).
-    """
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
@@ -159,9 +143,7 @@ class StudentProfile(models.Model):
 
 
 class DeletionLog(models.Model):
-    """
-    Registro de auditoría cuando se realiza un 'soft delete' sobre un usuario.
-    """
+
 
     deleted_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -569,3 +569,13 @@ Se ha implementado un frontend profesional de producción con:
 🧩 Componentes reutilizables bien estructurados
 🎨 Experiencia de usuario fluida y moderna
 El frontend está listo para producción y puede extenderse fácilmente con las funcionalidades pendientes.
+
+
+
+
+
+import React from "react";
+
+export default function App() {
+  return <div>App</div>;
+}
