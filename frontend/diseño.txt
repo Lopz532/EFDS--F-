@@ -1,0 +1,201 @@
+Carpetas principales del frontend
+
+src/components → Aquí van componentes reutilizables: botones, inputs, cards, badges, modales, etc.
+
+src/context → Contextos como AuthContext.jsx (no necesitas tocar mucho para diseño).
+
+src/pages o src/screens (según tu estructura, parece que no hay, pero tus páginas están así):
+
+Login.jsx → Página de login.
+
+Dashboard.jsx → Página principal después de login.
+
+src/router → AppRouter.jsx → Define rutas protegidas y públicas, aquí solo importa el layout.
+
+src/hooks → useAuth.js → Para lógica de autenticación, no tocar diseño.
+
+src/utils → axiosConfig.js, tokenManager.js → solo backend, no diseño.
+
+Flujo recomendado para diseño
+
+Primero crea un layout base:
+
+Archivo sugerido: src/components/Layout.jsx
+
+Contendrá Navbar + Sidebar + Main Content
+
+Lo usarás en Dashboard y otras páginas.
+
+Rediseña páginas individuales:
+
+Login.jsx → Login moderno (ya te di ejemplo).
+
+Dashboard.jsx → Tarjetas, listas, estadísticas.
+
+Más adelante: Materias.jsx, Tareas.jsx, Usuarios.jsx (crear en src/pages/ o src/components/pages/).
+
+Crea componentes reutilizables en src/components:
+
+Button.jsx, Input.jsx, Card.jsx, Table.jsx, Badge.jsx.
+
+Así mantienes consistencia visual en todas las páginas.
+
+Tailwind config:
+
+Archivo: tailwind.config.js (raíz del frontend).
+
+Define colores, tipografía, breakpoints para responsive.
+
+Si quieres, te puedo hacer un esqueleto de Layout.jsx listo para poner Navbar y Sidebar que luego usarías en todas tus páginas, así solo te concentras en diseñar contenido dentro del layout.
+
+¿Quieres que haga eso ahora?
+
+Dijiste:
+flujo recomendado de los diseños y componentes que deberia usar para cada uno como recomendaciones 
+ChatGPT dijo:
+
+Perfecto, te hago un flujo de diseño y recomendaciones de componentes para cada página principal y lo que deberías usar. Lo organizo en fases para que practiques paso a paso:
+
+Fase 1: Componentes base (reutilizables)
+
+Antes de diseñar páginas completas, crea estos componentes en src/components/:
+
+Componente	Uso	Recomendación Tailwind
+Button.jsx	Botones (primary, secondary, danger)	px-4 py-2 rounded-lg font-medium hover:bg-indigo-600 transition
+Input.jsx	Inputs de texto/password	border rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-indigo-500
+Card.jsx	Tarjetas de información	bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition
+Badge.jsx	Etiquetas de estado (activo, pendiente)	px-2 py-1 rounded-full text-sm font-semibold
+Table.jsx	Listados de datos	w-full table-auto border-collapse text-left
+Modal.jsx	Ventanas emergentes	fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center
+Spinner.jsx	Cargando datos	animate-spin h-6 w-6 border-4 border-t-indigo-500 border-gray-200 rounded-full
+
+Estos componentes sirven para casi todas las páginas, así que hazlos primero y prácticalos con distintos estilos y colores.
+
+Fase 2: Layout base
+
+Archivo sugerido: src/components/Layout.jsx
+
+Contiene:
+
+Navbar → Logo, nombre de usuario, botón de logout
+
+Sidebar → Links a Dashboard, Materias, Tareas, Usuarios
+
+Main Content → Donde cargas la página específica
+
+Clases Tailwind recomendadas:
+
+Layout general: flex h-screen bg-gray-100
+
+Sidebar: w-64 bg-white shadow-md flex flex-col
+
+Main: flex-1 p-6 overflow-auto
+
+Fase 3: Páginas principales
+1️⃣ Login (Login.jsx)
+
+Componentes a usar:
+
+Input para usuario y contraseña
+
+Button para iniciar sesión
+
+Card para centrar el formulario
+
+Badge para mostrar errores
+
+Diseño sugerido:
+
+Fondo suave (bg-gray-100)
+
+Card centrada vertical y horizontal
+
+Animación suave al hover en botones
+
+Responsive: max-w-md w-full mx-auto
+
+2️⃣ Dashboard (Dashboard.jsx)
+
+Componentes a usar:
+
+Card → estadísticas, info de usuario
+
+Table → últimos registros (opcional)
+
+Badge → estados rápidos
+
+Diseño sugerido:
+
+Grid de cards: grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6
+
+Colores para diferenciar secciones
+
+Sidebar fijo y navbar superior
+
+3️⃣ Materias
+
+Componentes a usar:
+
+Table → lista de materias
+
+Button → crear / editar
+
+Modal → formulario de creación / edición
+
+Diseño sugerido:
+
+Tabla con encabezado fijo: sticky top-0 bg-white
+
+Botones con colores consistentes con Dashboard
+
+Responsive: tabla scrollable horizontal
+
+4️⃣ Tareas
+
+Componentes a usar:
+
+Table → lista de tareas
+
+Card → detalle de cada tarea
+
+Button → subir archivo / editar
+
+Modal → formulario de nueva tarea
+
+Diseño sugerido:
+
+Tabla + cards para vista rápida
+
+Upload de archivo con borde y hover: border-dashed p-4 rounded-md hover:border-indigo-500
+
+5️⃣ Usuarios
+
+Componentes a usar:
+
+Table → listado de usuarios con roles
+
+Badge → indicar rol
+
+Button → editar / eliminar / restaurar
+
+Modal → confirmación de acciones
+
+Diseño sugerido:
+
+Tabla profesional tipo admin panel
+
+Colores por rol: bg-green-100 estudiante, bg-blue-100 profesor
+
+Botones con iconos pequeños
+
+Fase 4: Recomendaciones generales
+
+Colores y tipografía: Define en tailwind.config.js para consistencia
+
+Animaciones: usa transition, hover:scale-105 o animate-spin para spinners
+
+Responsive: usa sm:, md:, lg: para adaptar cards y tables
+
+Errores y estados de carga: cada formulario y listado debe manejarlo
+
+Dark mode (opcional): dark:bg-gray-900 dark:text-white
