@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -8,10 +10,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.role})"
-
-
-from django.db import models
-from django.conf import settings
 
 
 class Materia(models.Model):
@@ -49,14 +47,7 @@ class Tarea(models.Model):
         return self.titulo
 
 
-# ---------- Nuevos modelos para classroom/profile/audit -----------
-from django.db import models
-from django.conf import settings
-from django.utils import timezone
-
-
 class Classroom(models.Model):
-
     nombre = models.CharField(max_length=120, unique=True)
     descripcion = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -66,8 +57,6 @@ class Classroom(models.Model):
 
 
 class StudentProfile(models.Model):
-
-
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
     )
@@ -78,7 +67,6 @@ class StudentProfile(models.Model):
         blank=True,
         related_name="students",
     )
-    # Puedes añadir más campos: grado, matricula, telefono, etc.
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -86,65 +74,6 @@ class StudentProfile(models.Model):
 
 
 class DeletionLog(models.Model):
-
-
-    deleted_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="deletion_logs",
-    )
-    deleted_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="performed_deletions",
-    )
-    reason = models.CharField(max_length=255, blank=True)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f"DeletionLog: {self.deleted_user} by {self.deleted_by} at {self.created_at}"
-
-
-# ---------- Nuevos modelos para classroom/profile/audit -----------
-from django.db import models
-from django.conf import settings
-from django.utils import timezone
-
-
-class Classroom(models.Model):    
-
-    nombre = models.CharField(max_length=120, unique=True)
-    descripcion = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.nombre
-
-
-class StudentProfile(models.Model):
-
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
-    )
-    classroom = models.ForeignKey(
-        Classroom,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="students",
-    )
-    # Puedes añadir más campos: grado, matricula, telefono, etc.
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"profile:{self.user.username}"
-
-
-class DeletionLog(models.Model):
-
-
     deleted_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -175,6 +104,5 @@ User = get_user_model()
 @receiver(post_save, sender=User)
 def create_profile_for_new_user(sender, instance, created, **kwargs):
     if created:
-        # crea profile si no existe
         if not hasattr(instance, "profile"):
             StudentProfile.objects.create(user=instance)

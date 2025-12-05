@@ -4,7 +4,6 @@ from .models import Materia, Tarea, StudentProfile
 
 User = get_user_model()
 
-# Campos de usuario
 model_field_names = {f.name for f in User._meta.get_fields() if hasattr(f, "name")}
 fields = ["id", "username", "email", "first_name", "last_name"]
 fields.append("password")
@@ -38,17 +37,24 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class MateriaSerializer(serializers.ModelSerializer):
-    profesor_name = serializers.CharField(source='creado_por.username', read_only=True)
+    profesor_name = serializers.CharField(source="creado_por.username", read_only=True)
 
     class Meta:
         model = Materia
-        fields = ["id", "nombre", "descripcion", "creado_por", "profesor_name", "created_at"]
+        fields = [
+            "id",
+            "nombre",
+            "descripcion",
+            "creado_por",
+            "profesor_name",
+            "created_at",
+        ]
         read_only_fields = ["creado_por", "created_at"]
 
 
 class TareaSerializer(serializers.ModelSerializer):
-    profesor_name = serializers.CharField(source='creado_por.username', read_only=True)
-    materia_name = serializers.CharField(source='materia.nombre', read_only=True)
+    profesor_name = serializers.CharField(source="creado_por.username", read_only=True)
+    materia_name = serializers.CharField(source="materia.nombre", read_only=True)
 
     class Meta:
         model = Tarea

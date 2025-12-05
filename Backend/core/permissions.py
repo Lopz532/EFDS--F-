@@ -68,7 +68,9 @@ class CanDeleteUser(BasePermission):
             return False
 
         target_role = getattr(obj, "role", None)
-        target_is_teacher_or_staff = (target_role == "teacher") or getattr(obj, "is_staff", False)
+        target_is_teacher_or_staff = (target_role == "teacher") or getattr(
+            obj, "is_staff", False
+        )
         if target_is_teacher_or_staff:
             return False
 

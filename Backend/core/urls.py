@@ -7,8 +7,8 @@ from .auth_views import LogoutView
 
 # Routers para ViewSets
 router = DefaultRouter()
-router.register(r'materias', MateriaViewSet, basename='materias')
-router.register(r'tareas', TareaViewSet, basename='tareas')
+router.register(r"materias", MateriaViewSet, basename="materias")
+router.register(r"tareas", TareaViewSet, basename="tareas")
 
 urlpatterns = [
     path("ping/", views.ping, name="ping"),
@@ -18,5 +18,5 @@ urlpatterns = [
     path("protected/", views.protected_view, name="protected"),
     path("auth/logout/", LogoutView.as_view(), name="auth-logout"),
     path("auth/me/", views.me_view, name="auth-me"),
-    path("api/", include(router.urls)),  # <-- Aquí se añaden materias y tareas
+    path("", include(router.urls)),  # <-- Aquí se añaden materias y tareas
 ]

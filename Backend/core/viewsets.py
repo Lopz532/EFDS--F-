@@ -4,19 +4,26 @@ from .models import Materia, Tarea
 from .serializers import MateriaSerializer, TareaSerializer
 from .permissions import IsTeacherOrReadOnly, _get_salon_from_user
 
+
 class MateriaViewSet(viewsets.ModelViewSet):
     serializer_class = MateriaSerializer
     permission_classes = [IsAuthenticated, IsTeacherOrReadOnly]
 
     def get_queryset(self):
         user = self.request.user
-        # Alumno: filtra por su salón
         user_salon = _get_salon_from_user(user)
+
         if getattr(user, "role", None) == "student":
-            return Materia.objects.filter(creado_por__profile__salon=user_salon)
-        # Profesor: filtra solo materias que creó
+            # Alumno: materias cuyos creadores enseñan al classroom del alumno
+            return Materia.objects.filter(
+                creado_por__profile__classroom=user_salon
+            ).order_by("-created_at")
+
         elif getattr(user, "role", None) == "teacher":
-            return Materia.objects.filter(creado_por=user)
+            # Profesor: ver sólo materias creadas por él
+            return Materia.objects.filter(creado_por=user).order_by("-created_at")
+
+        # por defecto vacío
         return Materia.objects.none()
 
     def perform_create(self, serializer):
@@ -29,13 +36,16 @@ class TareaViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        # Alumno: solo tareas de materias de su salón
         user_salon = _get_salon_from_user(user)
+
         if getattr(user, "role", None) == "student":
-            return Tarea.objects.filter(materia__creado_por__profile__salon=user_salon)
-        # Profesor: solo tareas creadas por él
+            return Tarea.objects.filter(
+                materia__creado_por__profile__classroom=user_salon
+            ).order_by("-created_at")
+
         elif getattr(user, "role", None) == "teacher":
-            return Tarea.objects.filter(creado_por=user)
+            return Tarea.objects.filter(creado_por=user).order_by("-created_at")
+
         return Tarea.objects.none()
 
     def perform_create(self, serializer):
