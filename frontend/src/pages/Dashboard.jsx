@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+/*import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Materias from "./Materias";
 import Tareas from "./Tareas";
@@ -40,7 +40,7 @@ const Dashboard = () => {
     <div className="p-4 space-y-6">
       <h1 className="text-2xl font-bold">Bienvenido, {user.username}</h1>
 
-      {/* Selección de salón */}
+      {/* Selección de salón 
       {!salonSeleccionado && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {salones.map((s) => (
@@ -56,7 +56,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Selección de materia */}
+      {/* Selección de materia 
       {salonSeleccionado && !materiaSeleccionada && (
         <Materias
           onSelectMateria={(m) => setMateriaSeleccionada(m)}
@@ -64,7 +64,7 @@ const Dashboard = () => {
         />
       )}
 
-      {/* Tareas de la materia */}
+      {/* Tareas de la materia *
       {materiaSeleccionada && (
         <div>
           <button
@@ -80,4 +80,59 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboard;*/
+
+import React, { useEffect, useState } from "react";
+import api from "../api/axiosConfig";
+import useAuth from "../hooks/useAuth";
+
+export default function Dashboard() {
+  const { user, logout } = useAuth();
+  const [materias, setMaterias] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const res = await api.get("/materias/");
+        if (mounted) setMaterias(res.data);
+      } catch (err) {
+        console.error("Error cargando materias:", err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    load();
+    return () => { mounted = false; };
+  }, []);
+
+  return (
+    <div style={{ padding: 20 }}>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1>SmartCampus</h1>
+        <div>
+          <span>{user?.username}</span>
+          <button onClick={logout} style={{ marginLeft: 12 }}>Cerrar sesión</button>
+        </div>
+      </header>
+
+      <h2 style={{ marginTop: 20 }}>Bienvenido, {user?.username}</h2>
+
+      {loading ? <p>Cargando materias...</p> : (
+        materias.length === 0
+          ? <p>No hay materias visibles para este usuario.</p>
+          : <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", marginTop: 12 }}>
+            {materias.map(m => (
+              <div key={m.id} style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12 }}>
+                <h3>{m.nombre}</h3>
+                <p>{m.descripcion || "— sin descripción —"}</p>
+                <p style={{ fontSize: 12, color: "#666" }}>Profesor: {m.profesor_name || m.creado_por}</p>
+                <button onClick={() => window.location.href = `/materias/${m.id}`} style={{ marginTop: 8 }}>Ver materia</button>
+              </div>
+            ))}
+          </div>
+      )}
+    </div>
+  );
+}

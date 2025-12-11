@@ -1,30 +1,17 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-const Sidebar = () => {
-    const links = [
-        { name: 'Dashboard', path: '/' },
-        { name: 'Materias', path: '/materias' },
-        { name: 'Tareas', path: '/tareas' },
-        { name: 'Usuarios', path: '/usuarios' },
-    ];
-
+export default function Sidebar() {
     return (
-        <aside className="w-64 bg-white shadow flex flex-col p-4">
-            {links.map(link => (
-                <NavLink
-                    key={link.name}
-                    to={link.path}
-                    className={({ isActive }) =>
-                        `py-2 px-3 rounded hover:bg-gray-200 ${isActive ? 'bg-gray-300 font-bold' : ''
-                        }`
-                    }
-                >
-                    {link.name}
-                </NavLink>
-            ))}
+        <aside className="w-60 bg-gray-900 text-white min-h-screen p-4">
+            <h2 className="text-xl font-bold mb-6">Menú</h2>
+
+            <nav className="flex flex-col gap-3">
+                <Link to="/dashboard">Dashboard</Link>
+                <Link to="/materias">Materias</Link>
+                <Link to="/tareas">Tareas</Link>
+                <Link to="/alumnos">Alumnos</Link>
+                <Link to="/logout">Cerrar sesión</Link>
+            </nav>
         </aside>
     );
-};
-
-export default Sidebar;
+}

@@ -97,6 +97,7 @@ class DeletionLog(models.Model):
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 User = get_user_model()
 
@@ -106,3 +107,17 @@ def create_profile_for_new_user(sender, instance, created, **kwargs):
     if created:
         if not hasattr(instance, "profile"):
             StudentProfile.objects.create(user=instance)
+
+class Submission(models.Model):
+    tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, related_name="submissions")
+    alumno = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="submissions")
+    archivo = models.FileField(upload_to="submissions/", null=True, blank=True)
+    comentario = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    entregado = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Submission {self.id} tarea={self.tarea_id} alumno={self.alumno_id}"

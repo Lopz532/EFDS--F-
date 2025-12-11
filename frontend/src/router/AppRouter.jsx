@@ -1,11 +1,17 @@
+// frontend/src/router/AppRouter.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Materias from "../pages/Materias";
+import MateriaDetail from "../pages/MateriaDetail";
 import Tareas from "../pages/Tareas";
 import Usuarios from "../pages/Usuarios";
+import CreateTarea from "../pages/CreateTarea";
+import CreateMateria from "../pages/CreateMateria";
+import TeacherSubmissions from "../pages/TeacherSubmissions";
 import ProtectedRoute from "../components/ProtectedRoute";
+import Layout from "../components/Layout";
 
 export default function AppRouter() {
   return (
@@ -15,54 +21,32 @@ export default function AppRouter() {
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Rutas protegidas */}
+        {/* Rutas protegidas con Layout */}
         <Route
-          path="/dashboard"
+          path="/"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Layout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="dashboard" element={<Dashboard />} />
 
-        <Route
-          path="/materias"
-          element={
-            <ProtectedRoute>
-              <Materias />
-            </ProtectedRoute>
-          }
-        />
+          {/* Materias */}
+          <Route path="materias" element={<Materias />} />
+          <Route path="materias/new" element={<CreateMateria />} />
+          <Route path="materias/:id" element={<MateriaDetail />} />
+          <Route path="materias/:id/tareas/new" element={<CreateTarea />} />
 
-        {/* Rutas dinámicas de materias y tareas */}
-        <Route
-          path="/materias/:materiaId"
-          element={
-            <ProtectedRoute>
-              <Tareas />
-            </ProtectedRoute>
-          }
-        />
+          {/* Tareas */}
+          <Route path="tareas" element={<Tareas />} />
+          <Route path="tareas/:tareaId/entregas" element={<TeacherSubmissions />} />
 
-        <Route
-          path="/tareas"
-          element={
-            <ProtectedRoute>
-              <Tareas />
-            </ProtectedRoute>
-          }
-        />
+          {/* Usuarios */}
+          <Route path="usuarios" element={<Usuarios />} />
+        </Route>
 
-        <Route
-          path="/usuarios"
-          element={
-            <ProtectedRoute>
-              <Usuarios />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Ruta 404 */}
+        {/* Rutas fallback */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>

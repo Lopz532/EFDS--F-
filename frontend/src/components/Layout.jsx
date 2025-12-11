@@ -1,17 +1,41 @@
-import React from 'react';
-import Navbar from './Navbar';
-import Sidebar from './Sidebar';
+// frontend/src/components/Layout.jsx
+import React from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
-const Layout = ({ children }) => {
+export default function Layout() {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // Aquí podrías limpiar el token o sesión
+        navigate("/login");
+    };
+
     return (
-        <div className="flex h-screen bg-gray-100">
-            <Sidebar />
-            <div className="flex-1 flex flex-col">
-                <Navbar />
-                <main className="p-6 overflow-auto">{children}</main>
-            </div>
+        <div style={{ display: "flex", minHeight: "100vh" }}>
+            {/* Menú lateral */}
+            <nav
+                style={{
+                    width: 200,
+                    background: "#2C3E50",
+                    color: "#fff",
+                    padding: 20,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                }}
+            >
+                <h2>Sistema Escolar</h2>
+                <Link to="/dashboard" style={{ color: "#fff" }}>Dashboard</Link>
+                <Link to="/materias" style={{ color: "#fff" }}>Materias</Link>
+                <Link to="/tareas" style={{ color: "#fff" }}>Tareas</Link>
+                <Link to="/usuarios" style={{ color: "#fff" }}>Alumnos</Link>
+                <button onClick={handleLogout} style={{ marginTop: "auto" }}>Cerrar sesión</button>
+            </nav>
+
+            {/* Contenido principal */}
+            <main style={{ flex: 1, padding: 20 }}>
+                <Outlet />
+            </main>
         </div>
     );
-};
-
-export default Layout;
+}

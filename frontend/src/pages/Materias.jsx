@@ -2,11 +2,14 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "../api/axiosConfig";
 import { AuthContext } from "../context/AuthContext";
 import Card from "../components/Card";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 export default function Materias() {
     const { user } = useContext(AuthContext);
     const [materias, setMaterias] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchMaterias = async () => {
@@ -44,5 +47,18 @@ export default function Materias() {
             ))}
         </div>
     );
+
+    {
+        user?.role === "teacher" && (
+            <div style={{ marginBottom: 12 }}>
+                <button
+                    onClick={() => navigate("/materias/new")}
+                    className="px-4 py-2 rounded bg-green-600 text-white"
+                >
+                    + Nueva Materia
+                </button>
+            </div>
+        )
+    }
 
 }
