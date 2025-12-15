@@ -4,7 +4,13 @@ from .models import Materia, Tarea, StudentProfile, Classroom, Submission
 
 User = get_user_model()
 
-# ---------------- SubmissionSerializer (única, permite archivo) ----------------
+# serializers.py
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
 class SubmissionSerializer(serializers.ModelSerializer):
     alumno_name = serializers.CharField(source="alumno.username", read_only=True)
     archivo = serializers.FileField(required=False, allow_null=True)
@@ -23,11 +29,13 @@ class SubmissionSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["alumno", "created_at", "alumno_name"]
 
+
 # ---------------- Usuario / Registro ----------------
 model_field_names = {f.name for f in User._meta.get_fields() if hasattr(f, "name")}
-fields = ["id", "username", "email", "first_name", "last_name", "password"]
+fields = ["username", "email", "first_name", "last_name", "password"]
 if "role" in model_field_names:
     fields.append("role")
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6)
@@ -44,6 +52,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -51,6 +60,7 @@ class UserSerializer(serializers.ModelSerializer):
         if "role" in model_field_names:
             out_fields.append("role")
         fields = tuple(out_fields)
+
 
 # ---------------- Materia / Tarea / Classroom ----------------
 class MateriaSerializer(serializers.ModelSerializer):

@@ -108,9 +108,17 @@ def create_profile_for_new_user(sender, instance, created, **kwargs):
         if not hasattr(instance, "profile"):
             StudentProfile.objects.create(user=instance)
 
+
 class Submission(models.Model):
-    tarea = models.ForeignKey(Tarea, on_delete=models.CASCADE, related_name="submissions")
-    alumno = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="submissions")
+    tarea = models.ForeignKey(
+        Tarea, on_delete=models.CASCADE, related_name="submissions"
+    )
+    alumno = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="submissions",
+    )
     archivo = models.FileField(upload_to="submissions/", null=True, blank=True)
     comentario = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

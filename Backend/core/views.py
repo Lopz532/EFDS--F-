@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
+from django.contrib.auth import get_user_model
 
 from rest_framework import status, generics
 from rest_framework.decorators import api_view, permission_classes
@@ -9,6 +10,13 @@ from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 from .serializers import RegisterSerializer, UserSerializer
+
+User = get_user_model()
+
+
+class RegisterUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
 
 
 @require_GET
@@ -29,6 +37,13 @@ def ping(request):
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = (AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print(serializer.errors)  # 👈 CLAVE
+            return Response(serializer.errors, status=400)
+        return super().create(request, *args, **kwargs)
 
 
 @extend_schema(

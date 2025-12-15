@@ -9,7 +9,7 @@ from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from .permissions import IsTeacherOrReadOnly, _get_salon_from_user
-from rest_framework import viewsets, status 
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 
 
@@ -21,13 +21,13 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        qs = Submission.objects.all().select_related("alumno","tarea")
+        qs = Submission.objects.all().select_related("alumno", "tarea")
 
         tarea_id = self.request.query_params.get("tarea")
         if tarea_id:
             qs = qs.filter(tarea_id=tarea_id)
 
-        if getattr(user,"role",None) in ("teacher",) or user.is_staff:
+        if getattr(user, "role", None) in ("teacher",) or user.is_staff:
             return qs.filter(tarea__creado_por=user)
         return qs.filter(alumno=user)
 

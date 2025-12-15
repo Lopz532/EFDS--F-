@@ -8,12 +8,17 @@ from core.routers import router as core_router
 
 urlpatterns = [
     path("", RedirectView.as_view(url="/api/docs/", permanent=False)),
-    path("admin/", admin.site.urls), 
+    path("admin/", admin.site.urls),
     path("api/", include("core.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("api/docs/",SpectacularSwaggerView.as_view(url_name="schema"),name="swagger-ui"),
-    path("api/", include(core_router.urls)),   # <-- router central (materias,tareas,submissions,...)
-
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(
+        "api/", include(core_router.urls)
+    ),  # <-- router central (materias,tareas,submissions,...)
 ]
 
 if settings.DEBUG:

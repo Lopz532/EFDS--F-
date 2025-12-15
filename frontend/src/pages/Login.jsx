@@ -3,6 +3,8 @@ import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import { Link } from "react-router-dom";
+
 
 export default function Login() {
   const { login } = useAuth();
@@ -30,6 +32,10 @@ export default function Login() {
   return (
     <div style={{ maxWidth: 420, margin: "3rem auto", padding: 20 }}>
       <h2>Iniciar sesión</h2>
+      <p>
+        ¿No tienes cuenta?
+        <Link to="/register">Registrarme</Link>
+      </p>
       <form onSubmit={onSubmit}>
         <label>Usuario</label>
         <Input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="usuario" />

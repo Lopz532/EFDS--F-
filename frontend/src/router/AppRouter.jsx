@@ -12,6 +12,7 @@ import CreateMateria from "../pages/CreateMateria";
 import TeacherSubmissions from "../pages/TeacherSubmissions";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Layout from "../components/Layout";
+import Register from "../pages/Register";
 
 export default function AppRouter() {
   return (
@@ -20,6 +21,7 @@ export default function AppRouter() {
         {/* Redirección inicial */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* Rutas protegidas con Layout */}
         <Route

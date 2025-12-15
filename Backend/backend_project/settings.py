@@ -184,5 +184,5 @@ AUTH_USER_MODEL = (
 # - Serve static files with WhiteNoise or a proper server
 # - Use HTTPS and secure cookies (SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE)
 
-MEDIA_URL = '/media/'
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
